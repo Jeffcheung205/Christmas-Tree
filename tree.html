@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: grid;
+      place-content: center;
+      background: radial-gradient(circle at top, #002244, #000014);
+      perspective: 35em;
+      overflow: hidden;
+    }
+
+    .scene {
+      position: relative;
+      transform-style: preserve-3d;
+      animation: roty 12s linear infinite;
+    }
+
+    /* Tree lights (reusing your 3D star idea) */
+    .light {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: red;
+      box-shadow: 0 0 8px currentColor;
+      transform-style: preserve-3d;
+      animation: blink 1.2s infinite alternate;
+    }
+
+    /* Top star */
+    .top-star {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ffd700;
+      box-shadow: 0 0 16px #ffd700;
+      transform: translate3d(-7px, -150px, 0);
+    }
+
+    @keyframes roty {
+      from { transform: rotateY(0deg); }
+      to   { transform: rotateY(360deg); }
+    }
+
+    @keyframes blink {
+      from { opacity: 0.4; transform: scale(0.9); }
+      to   { opacity: 1;   transform: scale(1.2); }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene" id="tree"></div>
+
+  <script>
+    const tree = document.getElementById('tree');
+    const layers = 10;        // height of the tree
+    const stepY  = 18;        // vertical distance between layers
+
+    for (let i = 0; i < layers; i++) {
+      const count  = 10 + i * 3;              // lights per ring
+      const radius = 10 + (layers - i) * 8;   // cone radius shrinks to top
+
+      for (let j = 0; j < count; j++) {
+        const angle = (j / count) * 2 * Math.PI;
+        const x = radius * Math.cos(angle);
+        const z = radius * Math.sin(angle);
+        const y = i * stepY;
+
+        const light = document.createElement('div');
+        light.className = 'light';
+        light.style.left = x + 'px';
+        light.style.bottom = y + 'px';
+        light.style.transform = `translateZ(${z}px)`;
+        // random colors and delays
+        const colors = ['#ff4444','#44ff44','#44aaff','#ffdd44','#ff66ff'];
+        light.style.background = colors[Math.floor(Math.random()*colors.length)];
+        light.style.boxShadow  = `0 0 10px ${light.style.background}`;
+        light.style.animationDelay = (Math.random()*1.2).toFixed(2) + 's';
+
+        tree.appendChild(light);
+      }
+    }
+
+    // top star
+    const topStar = document.createElement('div');
+    topStar.className = 'top-star';
+    tree.appendChild(topStar);
+  </script>
+</body>
+</html>
